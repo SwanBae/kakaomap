@@ -3,69 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kakao Map</title> 
+    <title>Kakaomap | 지도 레벨 바꾸기</title>
 </head>
 <body>
-    <h2>카카오 지도 보여주기</h2>
-    <!-- visit https://developers.kakao.com/docs/latest/ko/kakaomap/common -->
-    <!-- 1. 설정하기 https://developers.kakao.com/docs/latest/ko/kakaomap/common#prerequisite -->
-    <!-- https://developers.kakao.com/console/app/1255960/config --> 
-    <!-- javascript 개발문서 https://apis.map.kakao.com/web/guide/  -->
-    <!-- 키 발급에는 아래 과정이 필요합니다.
-            1. 카카오 개발자사이트 (https://developers.kakao.com) 접속
-            2. 개발자 등록 및 앱 생성
-            3. 웹 플랫폼 추가: 앱 선택 – [플랫폼] – [Web 플랫폼 등록] – 사이트 도메인 등록
-     -->
-    <!-- 카카오 지도 API를 사용하려면 kakao 개발ㄹ자 사이트에 앱 등록해야 함. -->
-    <!-- 지도 api를 사용하는 웹페이지는 반드시 웹서버에 업로드 해야 실행됨 -->
-    <!-- 배포방법1. dothome.co.kr (동적 웹페이지 호스팅: 백엔드 코드가 동작함, php사용 가능)-->
-    <!-- 배포방법2. Github page 기능 이용(정적인 웹페이지 호스팅) -->
-
-
-    <!-- 1. 지도를 담을 영역 만들기 [사이즈가 반드시 필요함.. 사이즈 없으면 안나옴]] -->
-    <div id="map" style="width: 100%; height: 300px;"></div>
     
-    <!-- 2. kakao 지도 library적용 (외부 스크립트) [앱등록시 재공되는 JavaScript 키 a210e5e5c75f6ae606bd24cf5dbc2fdf 기입 ] -->
+    <div id="map" style="width:100%;height:80vh"></div>
+    <p>
+        <button onclick="setCenter()">지도 중심좌표 이동시키기</button> 
+        <button onclick="panTo()">지도 중심좌표 부드럽게 이동시키기</button> 
+    </p>
+    <p>
+        <button onclick="zoomIn()">지도레벨 - 1</button>
+        <button onclick="zoomOut()">지도레벨 + 1</button>
+        <span id="maplevel"></span>
+    </p>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a210e5e5c75f6ae606bd24cf5dbc2fdf"></script>
+    <script>
     
-    <!-- 3. 실제 지도를 띄우는 코드 작성 (내부 스크립트) -->
-    <script>
-		var container = document.getElementById('map');
-		// var options = {
-		// 	center: new kakao.maps.LatLng(33.450701, 126.570667),
-		// 	level: 3
-		// };
+    var mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    var user_lat, user_lng; // 사용자 위치 변수 
+    window.navigator.geolocation.getCurrentPosition(function(position){
+        user_lat = position.coords.latitude
+        user_lng = position.coords.longitude
+    }); 
 
-		// var map = new kakao.maps.Map(container, options);
-    </script>
-    <br>
-    <button onclick="near()">내 주변 지도 보기</button>
-    <script>
-        function near(){
-            // 내 위치 얻어오기 
-            window.navigator.geolocation.getCurrentPosition(function(position){
-                var lat = position.coords.latitude
-                var lng = position.coords.longitude
+    var mapOption = { 
+        center: new kakao.maps.LatLng(user_lat,user_lng), // 지도의 중심좌표 
+        level: 3 // 지도의 확대 레벨
+    };
 
-                // 내 위치 정보를 카카오좌표 객체로 생성 
-                var myPos = new kakao.maps.LatLng(lat,lng)  
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 표시할 div와  지도 옵션으로  지도를 생성 
 
-                var options = {
-                    center : myPos, level: 3
-                }
-                var map = new kakao.maps.Map(container,options)
+    function setCenter(){
+        // 이동할 위도 경도 위치를 생성합니다 
+        var moveLatLon= new kakao.maps.LatLng(33.452613, 126.570888);
+        // 지도 중심을 이동 시킵니다. 
+        map.setCenter(moveLatLon);
+    }
 
-                // 내 위치에 마커 추가하기
-                var marker = new kakao.maps.Marker({
-                    position: myPos,
-                    // developers 에서 다른 옵션 추가 가능 
-                });
+    function panTo(){
+        // 이동할 위도 경도 위치를 생성합니다 
+        var moveLatLon = new kakao.maps.LatLng(33.450580, 126.574942);
+        
+        // 지도 중심을 부드럽게 이동시킵니다
+        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        map.panTo(moveLatLon);            
+    }
 
-                // 마커를 지도 위에 표시하기
-                marker.setMap(map);   
-            });
-        }
-    </script>
+    // 3. 지도 레벨 바꾸기
+    // 지도 레벨은 지도의 확대 수준을 의미합니다
+    // 지도 레벨은 1부터 14레벨이 있으며 숫자가 작을수록 지도 확대 수준이 높습니다
+    // 현재 지도의 레벨을 얻어옵니다
+    var level = map.getLevel();
+    // 지도 레벨을 표시합니다
+    displayLevel();
 
+    function zoomIn(){
+        // 지도를 1레벨 내립니다 (지도가 확대됩니다)
+        map.setLevel(level-1)
+    }
+    function zoomOut(){
+        // 지도를 1레벨 올립니다 (지도가 축소됩니다)
+        map.setLevel(level+1)
+    }
+    function displayLevel(){
+        var levelEl = document.getElementById('maplevel')
+    }
+
+
+</script>
+    
 </body>
 </html>
