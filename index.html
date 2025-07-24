@@ -38,6 +38,7 @@
 
 		// var map = new kakao.maps.Map(container, options);
     </script>
+    <br>
     <button onclick="near()">내 주변 지도 보기</button>
     <script>
         function near(){
@@ -52,16 +53,16 @@
                 var options = {
                     center : myPos, level: 3
                 }
-                var map = new kako.maps.Map(container,options)
+                var map = new kakao.maps.Map(container,options)
 
-		// 내 위치에 마커 추가하기
+                // 내 위치에 마커 추가하기
                 var marker = new kakao.maps.Marker({
                     position: myPos,
                     // developers 에서 다른 옵션 추가 가능 
                 });
 
                 // 마커를 지도 위에 표시하기
-                marker.setMap(map); 
+                marker.setMap(map);   
             });
         }
     </script>
