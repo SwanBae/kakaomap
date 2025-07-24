@@ -31,13 +31,31 @@
     <!-- 3. 실제 지도를 띄우는 코드 작성 (내부 스크립트) -->
     <script>
 		var container = document.getElementById('map');
-		var options = {
-			center: new kakao.maps.LatLng(33.450701, 126.570667),
-			level: 3
-		};
+		// var options = {
+		// 	center: new kakao.maps.LatLng(33.450701, 126.570667),
+		// 	level: 3
+		// };
 
-		var map = new kakao.maps.Map(container, options);
-	</script>
+		// var map = new kakao.maps.Map(container, options);
+    </script>
+    <button onclick="near()">내 주변 지도 보기</button>
+    <script>
+        function near(){
+            // 내 위치 얻어오기 
+            window.navigator.geolocation.getCurrentPosition(function(position){
+                var lat = position.coords.latitude
+                var lng = position.coords.longitude
+
+                // 내 위치 정보를 카카오좌표 객체로 생성 
+                var myPos = new kako.maps.LatLng(lat,lng)  
+
+                var options = {
+                    center : myPos, level: 3
+                }
+                var map = new kako.maps.Map(container,options)
+            });
+        }
+    </script>
 
 </body>
 </html>
