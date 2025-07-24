@@ -36,7 +36,7 @@
 
     function setCenter(){
         // 이동할 위도 경도 위치를 생성합니다 
-        var moveLatLon= new kakao.maps.LatLng(33.452613, 126.570888);
+        var moveLatLon= new kakao.maps.LatLng(user_lat,user_lng);
         // 지도 중심을 이동 시킵니다. 
         map.setCenter(moveLatLon);
     }
@@ -67,7 +67,8 @@
         map.setLevel(level+1)
     }
     function displayLevel(){
-        var levelEl = document.getElementById('maplevel')
+        var levelEl = document.getElementById('maplevel');
+        levelEl.innerHTML = '현재 지도 레벨은 ' + map.getLevel() + ' 레벨 입니다.';
     }
 
 
